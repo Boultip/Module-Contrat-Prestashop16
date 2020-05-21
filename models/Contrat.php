@@ -42,10 +42,16 @@ class Contrat extends ObjectModel
 		'multilang' => false,
 		'fields' => array(
             'id_contrat' => array('type' => self::TYPE_INT,'validate' => 'isNullOrUnsignedId'),
+            'libelle' => array('type' => self::TYPE_NOTHING),
             'id_client' => array('type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId'),
+            'id_address_delivery' =>    array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'id_address_invoice' =>    array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
+            'payment_method' => array('type' => self::TYPE_NOTHING),
             'periode' => array('type' => self::TYPE_INT, 'validate' => 'isInt'),
             'date_last_cmd' => array('type' => self::TYPE_DATE, 'valide' => 'isDate', 'required' => true),
-            'date_next_cmd' => array('type' => self::TYPE_DATE, 'valide' => 'isDate', 'required' => false)
+            'date_next_cmd' => array('type' => self::TYPE_DATE, 'valide' => 'isDate', 'required' => false),
+            'modif_client' =>  array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
+
         ),
 	);
 
@@ -57,5 +63,14 @@ class Contrat extends ObjectModel
 
         $res = Db::getInstance()->executeS($sql);
         return $res;
+    }
+
+    public function updateDateNextCmd($date){
+
+        $sql = 'UPDATE `'._DB_PREFIX_.'contrat`
+                        SET `modif_client` = 1, `date_next_cmd` = \''.pSQL($date).'\'
+                        WHERE `id_contrat` = '.(int)$this->id_contrat;
+        Db::getInstance()->execute($sql);
+        return true;
     }
 }

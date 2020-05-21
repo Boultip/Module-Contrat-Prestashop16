@@ -9,7 +9,7 @@ class Contrats extends Module
     {
         $this->name = 'contrats';
         $this->tab = 'administration';
-        $this->version = '1.0.0';
+        $this->version = '1.3.0';
         $this->author = 'Marie Diallo';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6');
@@ -50,7 +50,10 @@ class Contrats extends Module
         $tab->module = $this->name;
         $tab->add();
 
-        if (!parent::install()) {
+        if (!parent::install() ||
+            !$this->registerHook('displayCustomerAccount') ||
+            !$this->registerHook('header') ||
+            !$this->registerHook('displayBackOfficeHeader') ) {
             return false;
         }
 
@@ -82,7 +85,29 @@ class Contrats extends Module
 
     public function hookDisplayBackOfficeHeader()
     {
-        $this->context->controller->addCss($this->_path.'views/css/contrat.css');
+        $this->context->controller->addCss($this->_path.'views/css/admin.css');
     }
+
+    public function hookHeader()
+    {
+        $this->context->controller->addJS(_MODULE_DIR_.'contrats/views/js/front.js');
+        $this->context->controller->addCSS(_MODULE_DIR_.'contrats/views/css/front.css');
+
+    }
+
+    public function hookDisplayCustomerAccount()
+    {
+
+        $id_customer = $this->context->customer->id;
+        $sql = 'SELECT * FROM `'._DB_PREFIX_.'contrat` WHERE id_client='.(int)$id_customer;
+        $contrats = Db::getInstance()->executeS($sql);
+        if (count($contrats) == 0) {
+            return false;
+        }
+
+        return $this->display(__FILE__, 'views/templates/front/myaccount.tpl');
+
+    }
+
 
 }

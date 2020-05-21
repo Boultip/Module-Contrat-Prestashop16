@@ -6,6 +6,9 @@
 * @license Tous droits réservés / Le droit d'auteur s'applique (All rights reserved / French copyright law applies)
 **/
 $(document).ready(function() {
+
+    $(".load_save").hide();
+
     $('#contrat_product_autocomplete_input').autocomplete(
         'index.php?controller=AdminContrat&ajax_product_list',
         {
@@ -84,8 +87,9 @@ $(document).ready(function() {
 
     $('.update_contrat_ligne_input').click(function (e) {
 
-        $("#load_save_" + id_contrat_ligne).show();
+
         var id_contrat_ligne = $(this).attr('data-id');
+        $("#load_save_" + id_contrat_ligne).show();
         var qte = $("#update_contrat_ligne_input_" + id_contrat_ligne).val();
         $.ajax({
             type: 'POST',
@@ -132,11 +136,5 @@ $(document).ready(function() {
 
     }
 
-    function OpartToggleSubmitBtn(showMe) {
-        if (showMe == 0)
-            $('#opartBtnSubmit').prop('disabled', true);
-        else
-            $('#opartBtnSubmit').prop('disabled', false);
-    }
 });
 

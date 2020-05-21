@@ -81,6 +81,10 @@ class AdminContratController extends ModuleAdminController
 				'align' => 'center',
 				'width' => 25
 			),
+            'libelle' => array(
+                'title' => $this->l('Libellé'),
+                'width' => 'auto',
+            ),
 			'client' => array(
 				'title' => $this->l('Client'),
 				'width' => 'auto',

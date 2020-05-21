@@ -64,7 +64,7 @@
 				<input id="add_new_contrat_ligne_button" type="button" value ="ajouter le produit au contrat">
 			</div>
 			<div style="clear:both; height:20px;"></div>
-			<div id="load" style="display:none;" class="text-danger"> Page en cours de chargement... Merci de patienter</div>
+			<div id="load" style="display:none;" class="text-danger"><i class="icon-spinner icon-spin icon-large text-danger"></i> Page en cours de chargement... Merci de patienter</div>
 			<div class="col-lg-1"><span class="pull-right"></span></div>
 			<label class="control-label col-lg-2" for="opart_devis_product_autocomplete_input">
 				Produits du contrat :
@@ -87,7 +87,7 @@
 								<a href="#" class="update_contrat_ligne_input"  data-id="{$cl['id_contrat_ligne']}" ><i class="icon-save"></i></a>
 								&nbsp;
 								<a href="#" class="delete_contrat_ligne_input"  data-id="{$cl['id_contrat_ligne']}" ><i class="icon-trash"></i></a></td>
-							<td><span id="load_save_{$cl['id_contrat_ligne']}" class="enregistrement en cours..."></span></td>
+							<td><span id="load_save_{$cl['id_contrat_ligne']}" class="load_save" ><i class="icon-spinner icon-spin icon-large"></i></span></td>
 						</tr>
 					{/foreach}
 				</table>
