@@ -28,10 +28,15 @@ class Contrat extends ObjectModel
 {
 	/** @var string Name */
 	public $id_contrat;
+	public $libelle;
 	public $id_client;
+    public $id_address_delivery;
+    public $id_address_invoice;
+    public $payment_method;
 	public $periode;
 	public $date_last_cmd;
 	public $date_next_cmd;
+	public $modif_client;
 
 	/**
 	 * @see ObjectModel::$definition
@@ -51,7 +56,6 @@ class Contrat extends ObjectModel
             'date_last_cmd' => array('type' => self::TYPE_DATE, 'valide' => 'isDate', 'required' => true),
             'date_next_cmd' => array('type' => self::TYPE_DATE, 'valide' => 'isDate', 'required' => false),
             'modif_client' =>  array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
-
         ),
 	);
 

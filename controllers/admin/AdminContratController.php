@@ -107,6 +107,13 @@ class AdminContratController extends ModuleAdminController
                 'align' => 'text-center',
                 'type' => 'date',
             ),
+            'modif_client' => array(
+                'title' => $this->l('Date modifiée par client'),
+                'align' => 'text-center',
+                'type' => 'bool',
+                'active' => 'modif_client'
+
+            ),
 		);
         $this->toolbar_title = $this->module->l('Liste des contrats');
 
@@ -217,53 +224,6 @@ class AdminContratController extends ModuleAdminController
         ));
     }
 
-    /**
-	 * method call when ajax request is made with the details row action
-	 * @see AdminController::postProcess()
-	 */
-/*	public function ajaxProcessDetails()
-	{
-		if (($id = Tools::getValue('id')))
-		{
-			// override attributes
-			$this->display = 'list';
-			$this->lang = false;
-
-			$this->addRowAction('edit');
-			$this->addRowAction('delete');
-
-			$this->_select = 'b.*';
-			$this->_join = 'LEFT JOIN `'._DB_PREFIX_.'contrat_ligne` b ON (b.`id_contrat` = '.(int)$id.')';
-
-			// get list and force no limit clause in the request
-			$this->getList();
-
-			// Render list
-			$helper = new HelperList();
-			$helper->actions = $this->actions;
-			$helper->list_skip_actions = $this->list_skip_actions;
-			$helper->no_link = true;
-			$helper->shopLinkType = '';
-			$helper->identifier = $this->identifier;
-			$helper->imageType = $this->imageType;
-			$helper->toolbar_scroll = false;
-			$helper->show_toolbar = false;
-			$helper->orderBy = 'position';
-			$helper->orderWay = 'ASC';
-			$helper->currentIndex = self::$currentIndex;
-			$helper->token = $this->token;
-			$helper->table = $this->table;
-			$helper->position_identifier = $this->position_identifier;
-			// Force render - no filter, form, js, sorting ...
-			$helper->simple_header = true;
-			$content = $helper->generateList($this->_list, $this->fields_list);
-
-			echo Tools::jsonEncode(array('use_parent_structure' => false, 'data' => $content));
-		}
-
-		die;
-	}*/
-
     public function renderFormAdd()
     {
        $this->fields_form = array(
@@ -271,6 +231,13 @@ class AdminContratController extends ModuleAdminController
                 'title' => $this->module->l('Créer un contrat')
             ),
             'input' => array(
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Libellé'),
+                    'name' => 'libelle',
+                    'required' => true,
+                    'col' => 3
+                ),
                 array(
                     'type' => 'select',
                     'label' => $this->module->l('Select a customer'),
@@ -302,8 +269,20 @@ class AdminContratController extends ModuleAdminController
                     'label' => $this->l('Date prochaine commande'),
                     'name' => 'date_next_cmd',
                     'required' => true,
-                    'col' => 3
-                )
+                    'col' => 3,
+                ),
+                array(
+                    'type' => 'select',
+                    'label' => 'Moyens de paiement',
+                    'name' => 'payment_method',
+                    'class' => 'col-lg-6',
+                    'col' => 5,
+                    'options' => array(
+                        'query' => $this->availablePaymentMethods(),
+                        'id' => 'id',
+                        'name' => 'name'
+                    )
+                ),
             ),
             'submit' => array(
                 'title' => $this->module->l('Enregistrer et Quitter'),
@@ -341,11 +320,18 @@ class AdminContratController extends ModuleAdminController
                 ),
                 'input' => array(
                     array(
+                        'type' => 'text',
+                        'label' => $this->l('Libellé'),
+                        'name' => 'libelle',
+                        'required' => true,
+                        'col' => '3'
+                    ),
+                    array(
                         'type' => 'select',
                         'label' => 'Client',
                         'name' => 'id_client',
                         'class' => 'col-lg-6',
-                        'col' => 5,
+                        'col' => '5',
                         'options' => array(
                             'query' => $this->availableCustomers(),
                             'id' => 'id_customer',
@@ -354,7 +340,7 @@ class AdminContratController extends ModuleAdminController
                     ),
                     array(
                         'type' => 'text',
-                        'col' => 1,
+                        'col' => '1',
                         'label' => $this->l('Périodicité (en semaine)'),
                         'name' => 'periode',
                         'required' => true,
@@ -364,15 +350,52 @@ class AdminContratController extends ModuleAdminController
                         'label' => $this->l('Date dernière commande'),
                         'name' => 'date_last_cmd',
                         'required' => true,
-                        'col' => 3,
+                        'col' => '3',
                     ),
                     array(
                         'type' => 'date',
                         'label' => $this->l('Date prochaine commande'),
                         'name' => 'date_next_cmd',
                         'required' => true,
-                        'col' => 3,
-                    )
+                        'col' => '3'
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => 'Adresse de facturation',
+                        'name' => 'id_address_invoice',
+                        'col' => '6',
+                        'required' => true,
+                        'options' => array(
+                            'query' => $this->availableAddresses($contrat->id_client),
+                            'id' => 'id',
+                            'name' => 'name'
+                        )
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => 'Adresse de livraison',
+                        'name' => 'id_address_delivery',
+                        'col' => '6',
+                        'class' => 'large_select',
+                        'required' => true,
+                        'options' => array(
+                            'query' => $this->availableAddresses($contrat->id_client),
+                            'id' => 'id',
+                            'name' => 'name'
+                        )
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => 'Moyens de paiement',
+                        'name' => 'payment_method',
+                        'class' => 'col-lg-6',
+                        'col' => '5',
+                        'options' => array(
+                            'query' => $this->availablePaymentMethods(),
+                            'id' => 'id',
+                            'name' => 'name'
+                        )
+                    ),
 
                 ),
                 'submit' => array(
@@ -392,11 +415,16 @@ class AdminContratController extends ModuleAdminController
             );
 
             $this->fields_value = array(
+                'libelle'       => $contrat->libelle,
                 'id_client'     => (int)$contrat->id_client,
+                'id_address_delivery'     => (int)$contrat->id_address_delivery,
+                'id_address_invoice'     => (int)$contrat->id_address_invoice,
+                'payment_method'=> $contrat->payment_method,
                 'periode'       => (int)$contrat->periode,
                 'date_last_cmd' => displayDate($contrat->date_last_cmd,false),
                 'date_next_cmd' => displayDate($contrat->date_next_cmd,false),
                 'id_contrat' => (int)$contrat->id_contrat,
+                'modif_client' => (int)$contrat->modif_client
 
             );
 
@@ -408,7 +436,9 @@ class AdminContratController extends ModuleAdminController
         $this->context->smarty->assign(array(
             'contrat_token' => $this->token,
             'id_contrat' => (int)$contrat->id_contrat,
-            'lignes' => $contrat->getLigneContrat()
+            'lignes' => $contrat->getLigneContrat(),
+            'id_address_delivery'     => (int)$contrat->id_address_delivery,
+            'id_address_invoice'     => (int)$contrat->id_address_invoice
            /* 'json_carrier_list' => (isset($cart)) ? $obj->createCarrierList($cart) : '[]',*/
         ));
 
@@ -476,12 +506,6 @@ class AdminContratController extends ModuleAdminController
             die();
         }
 
-        if (Tools::isSubmit('submitAdd'.$this->table) && !count($this->errors)) {
-            
-
-
-         }
-
         parent::postProcess();
     }
 
@@ -507,5 +531,39 @@ class AdminContratController extends ModuleAdminController
             }
         }
         return !empty($customer_list) ? $customer_list : false;
+    }
+
+    protected function availablePaymentMethods(){
+        $payment_methods = array();
+        foreach (PaymentModule::getInstalledPaymentModules() as $payment) {
+            $module = Module::getInstanceByName($payment['name']);
+            if (Validate::isLoadedObject($module) && $module->active) {
+                $payment_methods[] = array('id' => $module->displayName, 'name' =>  $module->displayName);
+            }
+        }
+
+        return array_reverse($payment_methods);
+    }
+
+    protected function availableAddresses($id_customer){
+
+        $context = Context::getContext();
+
+        $sql = 'SELECT  a.`alias`, a.`id_address`, a.`lastname`, a.`firstname`, a.`lastname`, a.`company`, 
+			a.`address1`, a.`address2`, a.`postcode`, a.`city`,cl.`name` as `country_name`
+			FROM `' . _DB_PREFIX_ . 'address` a 
+			LEFT JOIN `' . _DB_PREFIX_ . 'country_lang` cl ON (a.`id_country`=cl.`id_country` AND cl.id_lang = ' . (int) $context->language->id . ')
+			WHERE a.id_customer=' . (int) $id_customer;
+
+        $result = array();
+        $result[] = array('id' => '', 'name' => '');
+        $address_list = Db::getInstance()->executeS($sql);
+        if (count($address_list) > 0) {
+            foreach ($address_list as $address) {
+               // $result[$address['id_address']] = $address;
+                $result[] = array('id' => $address['id_address'], 'name' => $address['alias'].' : '.$address['firstname'].' '.$address['lastname'].', '.$address['address1'].' '.$address['address2']. ', '.$address['postcode'].' '.$address['city']);
+            }
+        }
+        return $result;
     }
 }

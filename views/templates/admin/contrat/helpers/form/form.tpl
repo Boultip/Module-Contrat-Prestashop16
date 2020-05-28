@@ -25,7 +25,18 @@
 
 {extends file="helpers/form/form.tpl"}
 
+
+
 {block name="input"}
+	{if $input.name == 'id_address_delivery' && $id_address_delivery == ''}
+		<p class="text-danger"><strong> Merci de renseigner l'adresse de livraison !</strong></p>
+	{/if}
+	{if $input.name == 'id_address_invoice' && $id_address_invoice == ''}
+		<p class="text-danger"><strong> Merci de renseigner l'adresse de facturation !</strong></p>
+	{/if}
+	{if $input.name == 'date_next_cmd' }
+		<a href="#" id="calcul_date_next_cmd"> Calculer la date de prochaine commande </a>
+	{/if}
 	{$smarty.block.parent}
 {/block}
 

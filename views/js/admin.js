@@ -9,6 +9,33 @@ $(document).ready(function() {
 
     $(".load_save").hide();
 
+
+
+    $('#calcul_date_next_cmd').click(function(){
+        if($('#periode').val() == '' && $('#date_last_cmd').val() == ''){
+            alert("Vous devez d'abord renseigner la période et la date de dernière commande !");
+            return false;
+        }
+
+        var date = new Date($('#date_last_cmd').val());
+        date.setDate(date.getDate() + (7 * $('#periode').val())  );
+
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        $('#date_next_cmd').val([year, month, day].join('-'));
+
+        e.preventDefault();
+
+    });
+
     $('#contrat_product_autocomplete_input').autocomplete(
         'index.php?controller=AdminContrat&ajax_product_list',
         {

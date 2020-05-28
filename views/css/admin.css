@@ -1,4 +1,7 @@
 .icon-AdminMainContrat:before {
 	content: "\f01e";
 	}
+.bootstrap .fixed-width-xl {
+	width: 500px !important;
+}
 
