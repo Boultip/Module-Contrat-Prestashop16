@@ -1,39 +1,4 @@
 <?php
-/**
-* 2007-2015 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2015 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
-
-/**
- * Tab Example - Controller Admin Example
- *
- * @category   	Module / checkout
- * @author     	PrestaEdit <j.danse@prestaedit.com>
- * @copyright  	2012 PrestaEdit
- * @version   	1.0
- * @link       	http://www.prestaedit.com/
- * @since      	File available since Release 1.0
-*/
 require_once _PS_MODULE_DIR_ . 'contrats/models/Contrat.php';
 require_once _PS_MODULE_DIR_ . 'contrats/models/ContratLigne.php';
 
@@ -43,7 +8,6 @@ class AdminContratController extends ModuleAdminController
 	{
 		$this->table = 'contrat';
 		$this->className = 'Contrat';
-        $this->table = 'contrat';
         $this->identifier = 'id_contrat';
         $this->bootstrap = true;
 		$this->lang = false;
@@ -56,6 +20,8 @@ class AdminContratController extends ModuleAdminController
 
         $this->_join = 'LEFT JOIN `'._DB_PREFIX_.'customer` b ON (b.`id_customer` = a.`id_client`)';
        // $this->addJS(_MODULE_DIR_ . $this->name . '/views/js/contrat.js');
+
+
 		parent::__construct();
 	}
 
@@ -130,7 +96,7 @@ class AdminContratController extends ModuleAdminController
         parent::initPageHeaderToolbar();
         switch ($this->display) {
             case '':
-                $this->page_header_toolbar_btn['new_account_manager'] = array(
+               $this->page_header_toolbar_btn['new_contrat'] = array(
                     'href' => self::$currentIndex.'&addcontrat&token='.$this->token,
                     'desc' => $this->module->l('Créer un nouveau contrat'),
                     'icon' => 'process-icon-new');
@@ -146,10 +112,6 @@ class AdminContratController extends ModuleAdminController
     {
         switch ($this->display) {
             case '':
-                $this->toolbar_btn['new'] = array(
-                    'href' => self::$currentIndex.'&addcontrat&token='.$this->token,
-                    'desc' => $this->module->l('Add an account manager')
-                );
 
                 $this->toolbar_btn['export'] = array(
                     'href' => self::$currentIndex.'&export'.$this->table.'&token='.$this->token,
@@ -445,15 +407,6 @@ class AdminContratController extends ModuleAdminController
         return parent::renderForm();
     }
 
-
-
-	/*public function postProcess()
-	{
-		if (Tools::isSubmit('submitAdd'.$this->table)  || Tools::isSubmit('submitUpdate'.$this->table))
-		{
-            parent::postProcess();
-		}
-	}*/
     public function postProcess()
     {
         if (Tools::getIsset('ajax_product_list')) {

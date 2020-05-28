@@ -25,8 +25,6 @@
 
 {extends file="helpers/form/form.tpl"}
 
-
-
 {block name="input"}
 	{if $input.name == 'id_address_delivery' && $id_address_delivery == ''}
 		<p class="text-danger"><strong> Merci de renseigner l'adresse de livraison !</strong></p>
