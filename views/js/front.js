@@ -21,7 +21,20 @@ $(document).ready(function() {
            return false;
        }
        if(new Date(date) < new Date(dateLimite)){
-            alert("La nouvelle date doit être postérieure au " + dateLimite);
+
+           var d = new Date(dateLimite),
+               month = '' + (d.getMonth() + 1),
+               day = '' + d.getDate(),
+               year = d.getFullYear();
+
+           if (month.length < 2)
+               month = '0' + month;
+           if (day.length < 2)
+               day = '0' + day;
+
+           var dateLimiteNice = [day, month, year ].join('/');
+
+            alert("La nouvelle date doit être postérieure au " + dateLimiteNice);
             return false;
         }
         $("#load_save_" + id_contrat).show();

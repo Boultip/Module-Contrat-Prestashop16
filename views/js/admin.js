@@ -5,15 +5,63 @@
 * @copyright  Op'art
 * @license Tous droits réservés / Le droit d'auteur s'applique (All rights reserved / French copyright law applies)
 **/
+function deleteLigneContrat(id_contrat_ligne){
+    // var id_contrat_ligne = $(this).attr('data-id');
+
+    if (confirm("Voulez-vous vraiment supprimer ce produit du contrat ?")) {
+        $("#load_save_" + id_contrat_ligne).show();
+        $.ajax({
+            type: 'POST',
+            url: 'index.php?controller=AdminContrat&ajax_delete_contrat_ligne&token=' + contrat_token,
+
+            data: 'id_contrat_ligne=' + id_contrat_ligne,
+            success: function (data) {
+                alert('Les données ont bien été supprimées');
+                $("tr#id_" + id_contrat_ligne).hide();
+                $("#load_save_" + id_contrat_ligne).hide();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('Une erreur est survenue !');
+                $("#load_save_" + id_contrat_ligne).hide();
+            }
+        });
+    }
+    return false;
+
+}
+
+function updateLigneContrat(id_contrat_ligne) {
+
+    // var id_contrat_ligne = $(this).attr('data-id');
+    $("#load_save_" + id_contrat_ligne).show();
+    var qte = $("#update_contrat_ligne_input_" + id_contrat_ligne).val();
+    $.ajax({
+        type: 'POST',
+        url: 'index.php?controller=AdminContrat&ajax_update_contrat_ligne&token=' + contrat_token,
+
+        data: 'id_contrat_ligne=' + id_contrat_ligne + '&qte=' + qte,
+        success: function (data) {
+            alert('Les données ont bien été enregistrées.');
+            $("#load_save_" + id_contrat_ligne).hide();
+
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert('Une erreur est survenue !');
+            $("#load_save_" + id_contrat_ligne).hide();
+        }
+    });
+
+   return false;
+}
+
 $(document).ready(function() {
 
     $(".load_save").hide();
 
-
-
     $('#calcul_date_next_cmd').click(function(){
+
         if($('#periode').val() == '' && $('#date_last_cmd').val() == ''){
-            alert("Vous devez d'abord renseigner la période et la date de dernière commande !");
+            alert("Vous devez d'abord renseigner la périodicité et la date de dernière commande !");
             return false;
         }
 
@@ -76,8 +124,22 @@ $(document).ready(function() {
 
             data: 'id_contrat=' + id_contrat + '&id_produit=' + id_pdt + '&qte=' + qte,
             success: function (data) {
-                alert('Les données ont été enregistrees. La page va être rechargée, merci de patienter...');
-                window.location.reload();
+              //  alert('Les données ont été enregistrees. La page va être rechargée, merci de patienter...');
+              //  window.location.reload();
+                var d = $.parseJSON(data);
+
+                trproduit = '<tr id="id_'+ d.id+'"> <td>'+ d.id_produit +'</td><td>'+ d.name +'</td>';
+                trproduit += '<td><input id="update_contrat_ligne_input_' + d.id + '" type="text" value="' + d.quantite + '" ></td>';
+                trproduit += '<td><a href="#" onClick="updateLigneContrat(' + d.id + '); return false;"   data-id="' + d.id + '" ><i class="icon-save"></i></a>&nbsp;';
+
+                trproduit += '<a href="#"  onClick="deleteLigneContrat(' + d.id + '); return false;" ><i class="icon-trash"></i></a></td>';
+                trproduit += '<td><span id="load_save_' + d.id + '" class="load_save" ><i class="icon-spinner icon-spin icon-large"></i></span></td></tr>';
+
+                html = $("#liste_produits").html();
+
+                $("#liste_produits").html(html + trproduit);
+                $('#load_save_' + d.id ).hide();
+                $("#load").hide();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 $("#load").hide();
@@ -87,55 +149,7 @@ $(document).ready(function() {
     });
 
 
-    $('.delete_contrat_ligne_input').click(function (e) {
-        var id_contrat_ligne = $(this).attr('data-id');
 
-        if (confirm("Voulez-vous vraiment supprimer ce produit du contrat ?")) {
-            $("#load_save_" + id_contrat_ligne).show();
-            $.ajax({
-                type: 'POST',
-                url: 'index.php?controller=AdminContrat&ajax_delete_contrat_ligne&token=' + contrat_token,
-
-                data: 'id_contrat_ligne=' + id_contrat_ligne,
-                success: function (data) {
-                    alert('Les données ont bien été enregistrées');
-                    $("tr#id_" + id_contrat_ligne).hide();
-                    $("#load_save_" + id_contrat_ligne).hide();
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert('Une erreur est survenue !');
-                    $("#load_save_" + id_contrat_ligne).hide();
-                }
-            });
-        }
-        e.preventDefault();
-
-    });
-
-    $('.update_contrat_ligne_input').click(function (e) {
-
-
-        var id_contrat_ligne = $(this).attr('data-id');
-        $("#load_save_" + id_contrat_ligne).show();
-        var qte = $("#update_contrat_ligne_input_" + id_contrat_ligne).val();
-        $.ajax({
-            type: 'POST',
-            url: 'index.php?controller=AdminContrat&ajax_update_contrat_ligne&token=' + contrat_token,
-
-            data: 'id_contrat_ligne=' + id_contrat_ligne + '&qte=' + qte,
-            success: function (data) {
-                alert('Les données ont bien été enregistrées.');
-                $("#load_save_" + id_contrat_ligne).hide();
-
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert('Une erreur est survenue !');
-                $("#load_save_" + id_contrat_ligne).hide();
-            }
-        });
-
-        e.preventDefault();
-    });
 
     var boolForLine = 1;
 

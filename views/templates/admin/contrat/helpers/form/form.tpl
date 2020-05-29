@@ -65,7 +65,7 @@
 			<div class="col-lg-3">
 				<p class="help-block">Saisissez directement l'id du produit</p>
 				<div>
-					<span id="contrat_product_name_text"></span>
+					<span id="contrat_product_name_text"></span><br/>
 					Id : <input type="text" id="contrat_product_id_input" name="contrat_product_qte_input" />
 					Quantité <input type="text" id="contrat_product_qte_input" name="contrat_product_qte_input" />
 				</div>
@@ -73,7 +73,7 @@
 				<input id="add_new_contrat_ligne_button" type="button" value ="ajouter le produit au contrat">
 			</div>
 			<div style="clear:both; height:20px;"></div>
-			<div id="load" style="display:none;" class="text-danger"><i class="icon-spinner icon-spin icon-large text-danger"></i> Page en cours de chargement... Merci de patienter</div>
+			<div id="load" style="display:none;text-align:center;" class="text-danger"><i class="icon-spinner icon-spin icon-large text-danger"></i> Page en cours de chargement... Merci de patienter</div>
 			<div class="col-lg-1"><span class="pull-right"></span></div>
 			<label class="control-label col-lg-2" for="opart_devis_product_autocomplete_input">
 				Produits du contrat :
@@ -87,18 +87,20 @@
 						<th style="width:5%">&nbsp;</th>
 						<th></th>
 					</tr>
+					<tbody id="liste_produits">
 					{foreach from=$lignes item=cl}
 						<tr id="id_{$cl['id_contrat_ligne']}">
 							<td>{$cl['id_produit']}</td>
 							<td>{$cl['name']}</td>
 							<td><input id="update_contrat_ligne_input_{$cl['id_contrat_ligne']}" type="text" value="{$cl['quantite']}" ></td>
 							<td>
-								<a href="#" class="update_contrat_ligne_input"  data-id="{$cl['id_contrat_ligne']}" ><i class="icon-save"></i></a>
+								<a href="#" class="update_contrat_ligne_input"  onClick="updateLigneContrat({$cl['id_contrat_ligne']}); return false;" ><i class="icon-save"></i></a>
 								&nbsp;
-								<a href="#" class="delete_contrat_ligne_input"  data-id="{$cl['id_contrat_ligne']}" ><i class="icon-trash"></i></a></td>
+								<a href="#" class="delete_contrat_ligne_input"  onClick="deleteLigneContrat({$cl['id_contrat_ligne']}); return false;" ><i class="icon-trash"></i></a></td>
 							<td><span id="load_save_{$cl['id_contrat_ligne']}" class="load_save" ><i class="icon-spinner icon-spin icon-large"></i></span></td>
 						</tr>
 					{/foreach}
+					</tbody>
 				</table>
 			</div>
 			<div style="clear:both;"></div>
@@ -109,8 +111,8 @@
 {/block}
 
 {block name="script"}
+	var contrat_token = '{$contrat_token|escape:'htmlall':'UTF-8'}';
 	{if isset($id_contrat) }
-		var contrat_token = '{$contrat_token|escape:'htmlall':'UTF-8'}';
 		var id_contrat = '{$id_contrat|escape:'htmlall':'UTF-8'}';
 	{/if}
 {/block}

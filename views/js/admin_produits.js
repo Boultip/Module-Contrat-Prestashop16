@@ -36,7 +36,7 @@ $(document).ready(function() {
             }
 
        });
-       //$(this).val('');
+       $(this).val('');
 
 
 });

@@ -263,6 +263,14 @@ class AdminContratController extends ModuleAdminController
 
         $this->show_form_cancel_button = true;
 
+        $this->addJqueryPlugin(array('autocomplete'));
+        $this->addJqueryPlugin(array('autocomplete'));
+        $this->addJS(_MODULE_DIR_ . '/contrats/views/js/admin.js');
+
+        $this->context->smarty->assign(array(
+            'contrat_token' => $this->token
+        ));
+
         return parent::renderForm();
     }
 
@@ -392,8 +400,7 @@ class AdminContratController extends ModuleAdminController
 
         $this->addJqueryPlugin(array('autocomplete'));
         $this->addJS(_MODULE_DIR_ . '/contrats/views/js/admin.js');
-   //     if (!($obj = $this->loadObject(true)))
-   //         return;
+
         $token = Tools::getAdminTokenLite('AdminContrat');
         $this->context->smarty->assign(array(
             'contrat_token' => $this->token,
@@ -437,6 +444,9 @@ class AdminContratController extends ModuleAdminController
 
             $contrat_ligne->save();
 
+            $contrat_ligne->update();
+            $contrat_ligne->name = $this->getProduit($contrat_ligne->id_produit);
+            echo (Tools::jsonEncode($contrat_ligne));
             die();
         }
 
@@ -518,5 +528,26 @@ class AdminContratController extends ModuleAdminController
             }
         }
         return $result;
+    }
+
+    protected function getProduit($id_produit){
+
+        if($id_produit == 0){
+            return '';
+        }else{
+            $sql = 'SELECT pl.name FROM `' . _DB_PREFIX_ . 'product_lang` pl ';
+            $sql .= ' WHERE pl.id_lang = 1 AND `id_product` = '.(int)$id_produit;
+
+            $res = Db::getInstance()->executeS($sql);
+
+            if(isset($res[0]['name'])){
+                return $res[0]['name'];
+            }else{
+                return "Ce produit n'existe pas";
+            }
+
+        }
+
+
     }
 }
