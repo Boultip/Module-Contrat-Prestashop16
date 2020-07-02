@@ -21,7 +21,6 @@ class AdminContratController extends ModuleAdminController
         $this->_join = 'LEFT JOIN `'._DB_PREFIX_.'customer` b ON (b.`id_customer` = a.`id_client`)';
        // $this->addJS(_MODULE_DIR_ . $this->name . '/views/js/contrat.js');
 
-
 		parent::__construct();
 	}
 
@@ -55,6 +54,12 @@ class AdminContratController extends ModuleAdminController
 				'title' => $this->l('Client'),
 				'width' => 'auto',
 			),
+            'client_can_edit' => array(
+                'title' => $this->l('Modifiable'),
+                'width' => 'auto',
+                'type' => 'bool',
+                'active' => 'client_can_edit'
+            ),
             'periode' => array(
                 'title' => $this->l('Périodicité (Nb semaines)'),
                 'width' => 'auto',
@@ -188,7 +193,8 @@ class AdminContratController extends ModuleAdminController
 
     public function renderFormAdd()
     {
-       $this->fields_form = array(
+
+        $this->fields_form = array(
             'legend' => array(
                 'title' => $this->module->l('Créer un contrat')
             ),
@@ -210,6 +216,25 @@ class AdminContratController extends ModuleAdminController
                         'id' => 'id_customer',
                         'name' => 'name'
                     )
+                ),
+                array(
+                    'type' => 'radio',
+                    'label' => $this->l('Modif. client autorisées'),
+                    'name' => 'client_can_edit',
+                    'required' => true,
+                    'class' => 't',
+                    'is_bool' => true,
+                    'values'    => array(                                 // $values contains the data itself.
+                        array(
+                            'id'    => 'client_can_edit',                           // The content of the 'id' attribute of the <input> tag, and of the 'for' attribute for the <label> tag.
+                            'value' => 1,                                     // The content of the 'value' attribute of the <input> tag.
+                            'label' => 'Oui'                   // The <label> for this radio button.
+                        ),
+                        array(
+                            'id'    => 'client_can_edit',
+                            'value' => 0,
+                            'label' => 'Non'
+                        ))
                 ),
                 array(
                     'type' => 'text',
@@ -309,6 +334,25 @@ class AdminContratController extends ModuleAdminController
                         )
                     ),
                     array(
+                        'type' => 'radio',
+                        'label' => $this->l('Modif. client autorisées'),
+                        'name' => 'client_can_edit',
+                        'required' => true,
+                        'class' => 't',
+                        'is_bool' => true,
+                        'values'    => array(                                 // $values contains the data itself.
+                            array(
+                                'id'    => 'client_can_edit_on',                           // The content of the 'id' attribute of the <input> tag, and of the 'for' attribute for the <label> tag.
+                                'value' => 1,                                     // The content of the 'value' attribute of the <input> tag.
+                                'label' => 'Oui'                   // The <label> for this radio button.
+                            ),
+                            array(
+                                'id'    => 'client_can_edit_off',
+                                'value' => 0,
+                                'label' => 'Non'
+                            ))
+                    ),
+                    array(
                         'type' => 'text',
                         'col' => '1',
                         'label' => $this->l('Périodicité (en semaine)'),
@@ -387,6 +431,7 @@ class AdminContratController extends ModuleAdminController
             $this->fields_value = array(
                 'libelle'       => $contrat->libelle,
                 'id_client'     => (int)$contrat->id_client,
+                'client_can_edit'     => (int)$contrat->client_can_edit,
                 'id_address_delivery'     => (int)$contrat->id_address_delivery,
                 'id_address_invoice'     => (int)$contrat->id_address_invoice,
                 'payment_method'=> $contrat->payment_method,

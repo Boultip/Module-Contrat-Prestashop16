@@ -65,7 +65,7 @@ class ContratslistModuleFrontController extends ModuleFrontController {
             //update statut for quote nore more valid
             $obj = new Contrat($contrat['id_contrat']);
 
-            if($contrat['date_next_cmd'] > $dateLimite){
+            if($contrat['client_can_edit'] && $contrat['date_next_cmd'] > $dateLimite){
                 $contrat['editable'] = true;
             }else{
                 $contrat['editable'] = false;

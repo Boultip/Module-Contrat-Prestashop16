@@ -30,6 +30,7 @@ class Contrat extends ObjectModel
 	public $id_contrat;
 	public $libelle;
 	public $id_client;
+	public $client_can_edit;
     public $id_address_delivery;
     public $id_address_invoice;
     public $payment_method;
@@ -49,6 +50,7 @@ class Contrat extends ObjectModel
             'id_contrat' => array('type' => self::TYPE_INT,'validate' => 'isNullOrUnsignedId'),
             'libelle' => array('type' => self::TYPE_NOTHING),
             'id_client' => array('type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId'),
+            'client_can_edit' =>  array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
             'id_address_delivery' =>    array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
             'id_address_invoice' =>    array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
             'payment_method' => array('type' => self::TYPE_NOTHING),
